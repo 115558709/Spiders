@@ -20,7 +20,7 @@ class douban_Movie_spider():
         {'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:40.0) Gecko/20100101 Firefox/40.0'},
         {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/44.0.2403.89 Chrome/44.0.2403.89 Safari/537.36'}
     ]
-    file_path="Movie/"
+    file_path="movies/"
 
     def Parse_Page(self):
         request=Request(urljoin(self.url,"top250?start="+str(self.page_num*25)+"&filter="),headers=random.choice(self.headers))
