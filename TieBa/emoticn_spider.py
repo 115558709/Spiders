@@ -1,13 +1,12 @@
 from urllib import urlretrieve
 import os
+from multiprocessing.dummy import Pool
 
 class emoticon_spider():
     url='http://static.tieba.baidu.com/tb/editor/images/client/image_emoticon%d.png'
-    emo_num=1
     image_path=("tieba_emotion/")
 
-    def Get_Image(self):
-        url=self.url % self.emo_num
+    def Get_Image(self,url):
         print url
         try:
             image_title=url.split('/')[-1]
@@ -19,8 +18,14 @@ class emoticon_spider():
     def __init__(self):
         if not os.path.exists(self.image_path):
             os.mkdir(self.image_path)
-        while(self.emo_num<51):
-            self.Get_Image()
-            self.emo_num+=1
+        urls=[]
+        for i in range(1,51):
+            url=url % i
+            urls.append(url)
+
+        pool=Pool(4)
+        thread=pool.map(self.Get_Image,urls)
+        pool.close()
+        pool.join()
 
 sp=emoticon_spider()
