@@ -57,7 +57,7 @@ class Handler(BaseHandler):
             dir_tuple=dir_attr.split('/')
             dir_attr=''
             for d in dir_tuple:
-                dir_attr+=d+'|'
+                dir_attr+=d+'_'
         dir_path=self.path+dir_attr+'/'
         if not os.path.exists(dir_path):
             os.makedirs(dir_path)
@@ -70,7 +70,7 @@ class Handler(BaseHandler):
             title_tuple=title.split('/')
             title=''
             for t in title_tuple:
-                title+=t+'|'
+                title+=t+'_'
         for each in response.doc('.col2 a').items():
             item_name.append(each.text())
         for each in response.doc('div > .num').items():
