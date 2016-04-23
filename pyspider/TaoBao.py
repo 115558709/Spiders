@@ -6,6 +6,7 @@
 from pyspider.libs.base_handler import *
 import os
 import re
+import json
 
 
 class Handler(BaseHandler):
@@ -16,7 +17,7 @@ class Handler(BaseHandler):
     }
     
     def __init__(self):
-        self.path=("/home/wqlin/TaoBao/")
+        self.path=("/home/wqlin/淘宝/")
         self.base_url='https://top.taobao.com/index.php?spm=a1z5i.1.2.1.hUTg2J&topId=HOME'
 
     @every(minutes=24 * 60)
@@ -52,37 +53,37 @@ class Handler(BaseHandler):
     @config(priority=3)
     def result_page(self,response):
         dir_attr=response.doc('li > .selected').text()
-        print dir_attr,'fuck'
-        if dir_attr=='服饰':
-            attr='FS/'
-        elif dir_attr=='数码家电':
-            attr='SM/'
-        elif dir_attr=='化妆品':
-            attr='HZP/'
-        elif dir_attr=='母婴':
-            attr='MY/'
-        elif dir_attr=='食品':
-            attr='SP/'
-        elif dir_attr=='文体':
-            attr='WT/'
-        elif dir_attr=='家居':
-            attr='JJ/'
-        else:
-            attr='ZH/'
-        dir_path=self.path+attr
+        if '/' in dir_attr:
+            dir_tuple=dir_attr.split('/')
+            dir_attr=''
+            for d in dir_tuple:
+                dir_attr+=d+'|'
+        dir_path=self.path+dir_attr+'/'
         if not os.path.exists(dir_path):
-            os.mkdir(dir_path)
+            os.makedirs(dir_path)
         item_name=[]
         item_sale=[]
         for each in response.doc('.param-item-selected').items():
             title=each.text()
+        #print title
+        if '/' in title:
+            title_tuple=title.split('/')
+            title=''
+            for t in title_tuple:
+                title+=t+'|'
         for each in response.doc('.col2 a').items():
             item_name.append(each.text())
         for each in response.doc('div > .num').items():
             item_sale.append(each.text())
-        with open(dir_path+title+'.json','a') as f:
+        with open(dir_path+title+'.txt','a') as f:
             for k,v in zip(item_name,item_sale):
                 item_dict={}
                 item_dict[k]=v
-                item_json=json.dumps(item_dict)
-                f.write(item_json+'\n')
+                f.write(str(item_dict).decode('unicode-escape')+'\n')
+        with open(dir_path+'总集合.txt','a') as f:
+            f.write(title+'\n')
+            for k,v in zip(item_name,item_sale):
+                item_dict={}
+                item_dict[k]=v
+                f.write(str(item_dict).decode('unicode-escape')+'\n')
+            f.write('\n\n\n')
