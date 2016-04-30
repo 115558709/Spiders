@@ -6,8 +6,10 @@
 from scrapy.item import Item, Field
 
 class Good(Item):
+    rank=Field()
     title=Field()
     price=Field()
-    points=Field()
-    type=Field()
+    turnover_index=Field()
+    top_id=Field()
+    type_id=Field()
 

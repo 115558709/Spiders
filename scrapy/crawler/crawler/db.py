@@ -2,12 +2,10 @@
 r=None
 
 class Table(object):
-    def __init__(self,conn,cache_size=100,ifcreate_table=False):
+    def __init__(self,conn,cache_size=100,ifcreate_table=True):
         self.conn = conn
         self.cache_size = cache_size
         self.data_cache=[]
-        self.create_stmt=''
-        self.insert_stmt=''
 
         cur=self.conn.cursor()
         if ifcreate_table:
@@ -16,7 +14,7 @@ class Table(object):
 
     def insert(self,*args):
         self.data_cache.append(args)
-        if len(data_cache)>self.cache_size:
+        if len(self.data_cache)>self.cache_size:
             self.flush()
 
     def flush(self):
@@ -26,13 +24,8 @@ class Table(object):
         self.data_cache=[]
 
 class good_Table(Table):
-    def __init__(self,conn,spider_name,cache_size=100,ifcreate_table=False):
+    def __init__(self,conn,spider_name,cache_size=100,ifcreate_table=True):
         self.table_name='good_info'
-        self.create_stmt='CREATE TABLE IF NOT EXISTS '+self.table_name+'(id int NOT NULL AUTO_INCREMENT,`title` text NOT NULL,`price` double,`points` double,`type` int PRIMARY KEY(id))'
-        self.insert_stmt='INSERT INTO '+self.table_name+'VALUES(NULL,,%s,%s,%s,%s)'
+        self.create_stmt='CREATE TABLE IF NOT EXISTS '+self.table_name+'(id int NOT NULL AUTO_INCREMENT,`rank` int,`title` text NOT NULL,`price` VARCHAR(10),`turnover_index` double,`top_id` VARCHAR(10),`type_id` VARCHAR(15),PRIMARY KEY(id));'
+        self.insert_stmt='INSERT INTO '+self.table_name+' VALUES(NULL, %s, %s, %s, %s, %s, %s);'
         Table.__init__(self,conn,cache_size=cache_size,ifcreate_table=ifcreate_table)
-
-
-
-
-
