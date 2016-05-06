@@ -6,10 +6,12 @@
 from scrapy.item import Item, Field
 
 class Good(Item):
+    mall=Field()
     rank=Field()
     title=Field()
     price=Field()
     turnover_index=Field()
     top_id=Field()
     type_id=Field()
+    url=Field()
 

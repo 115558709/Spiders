@@ -26,6 +26,6 @@ class Table(object):
 class good_Table(Table):
     def __init__(self,conn,spider_name,cache_size=100,ifcreate_table=True):
         self.table_name='good_info'
-        self.create_stmt='CREATE TABLE IF NOT EXISTS '+self.table_name+'(id int NOT NULL AUTO_INCREMENT,`rank` int,`title` text NOT NULL,`price` VARCHAR(10),`turnover_index` double,`top_id` VARCHAR(10),`type_id` VARCHAR(15),PRIMARY KEY(id));'
-        self.insert_stmt='INSERT INTO '+self.table_name+' VALUES(NULL, %s, %s, %s, %s, %s, %s);'
+        self.create_stmt='CREATE TABLE IF NOT EXISTS '+self.table_name+'(id int NOT NULL AUTO_INCREMENT,`mall` int, `rank` int,`title` text NOT NULL,`price` VARCHAR(10),`turnover_index` double,`top_id` VARCHAR(10),`type_id` VARCHAR(100),`url` VARCHAR(100), PRIMARY KEY(id));'
+        self.insert_stmt='INSERT INTO '+self.table_name+' VALUES(NULL, %s, %s, %s, %s, %s, %s, %s, %s);'
         Table.__init__(self,conn,cache_size=cache_size,ifcreate_table=ifcreate_table)

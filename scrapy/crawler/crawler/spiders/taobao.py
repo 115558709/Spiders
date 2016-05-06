@@ -55,11 +55,13 @@ class TBSpider(Spider):
 
         for r,t,p,i in zip(ranks,titles,prices,turnover_indexs):
             good={
+                'mall':'0',
                 'rank':r.strip(),
                 'title':t.strip(),
                 'price':p.split('￥')[-1].strip(),
                 'turnover_index':i.strip(),
                 'top_id':top_id.strip(),
-                'type_id':type_id.strip()
+                'type_id':type_id.strip(),
+                'url':response.url
             }
             yield Good(good)

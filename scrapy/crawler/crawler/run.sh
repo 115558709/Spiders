@@ -1,2 +1,2 @@
-rm -f logfile fuck.txt
-scrapy crawl tb
+rm -f logfile
+scrapy crawl tm
