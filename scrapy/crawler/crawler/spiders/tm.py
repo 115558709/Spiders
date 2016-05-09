@@ -47,42 +47,49 @@ class JDSpider(Spider):
 
     def parse_url(self,response):
         for link in self.needed_url_extractor.extract_links(response):
-            yield SplashRequest(link.url,callback=self.parse_item,args={'wait':2.5,'html':1,})
+            if 'industryCatId' in link.url:
+                yield SplashRequest(link.url,callback=self.parse_item,args={'wait':2.5,'html':1,})
 
     def parse_item(self,response):
         hxs=Selector(response)
         item_titles=extract(hxs,"//div[@id='J_ItemList']//p[@class='productTitle']/a/text()")
-        item_indexes=extract(hxs,"//div[@id='J_ItemList']//div[@class='product-iWrap']/p[@class='productStatus']//em/text()")
-        #item_prices=extract(hxs,"//div[@id='J_ItemList']//div[@class='product-iWrap']/p[@class='productPrice']/em/text()")
+        #item_indexes=extract(hxs,"//div[@id='J_ItemList']//div[@class='product-iWrap']/p[@class='productStatus']//em/text()")
+        item_prices=extract(hxs,"//div[@id='J_ItemList']//div[@class='product-iWrap']/p[@class='productPrice']/em/text()")
         top_id=extract_one(hxs,'//*[@id="J_CrumbSlideCon"]/li[2]/a/text()')
         #https://list.tmall.com/search_product.htm?spm=a220m.1000858.0.0.Wx5Jwi&cat=50034368&sort=d&style=g&search_condition=7&from=sn_1_rightnav&active=1&industryCatId=50043495&tmhkmain=0&type=pc
         #type_id=re.findall(r'.*industryCatId=(.*)',response.url)[0].split('&')[0]
-        type_id1=extract_one(hxs,'//*[@id="J_CrumbSlideCon"]/li[3]/div/a/text()')
+        type_id1=extract_one(hxs,'//*[@id="J_CrumbSlideCon"]//div/a/text()')[0]
+        type_id2 = extract_one(hxs, '//*[@id="J_CrumbSlideCon"]//div/a/text()')[-1]
         titles=[]
         for t in item_titles:
             if t.strip()!='':
                 titles.append(t.strip())
-        indexes=[]
-        for i in item_indexes:
+        prices=[]
+        for i in item_prices:
             if i.strip()!='':
-                indexes.append(i.strip())
+                prices.append(i.strip())
 
-
-        for i,tuples in enumerate(zip(titles,indexes)):
-            for title,index in tuples:
+        if len(titles)>19 and type_id2!=type_id1:
+            for i,t in enumerate(titles):
                 if i<20:
                     good={
                         'mall': '1',
                         'rank': str(i+1),
-                        'title': title.strip(),
+                        'title': t.strip(),
                         'price': '0',
-                        'turnover_index': index.strip(),
+                        'turnover_index':'0',
                         'top_id': top_id.strip(),
                         'type_id1': type_id1.strip(),
-                        'type_id2': '',
+                        'type_id2': type_id2.strip(),
                         'url': response.url
                     }
 
                     yield Good(good)
+
+        for link in self.needed_url_extractor.extract_links(response):
+            if 'industryCatId' in link.url:
+                yield SplashRequest(link.url, callback=self.parse_item, args={'wait': 2.5, 'html': 1,})
+
+
 
 
