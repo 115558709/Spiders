@@ -1,8 +1,5 @@
 jd
 tm
 tb
-*.sh
 .idea/
 *.pyc
-run.sh
-run[1-3].sh

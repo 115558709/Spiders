@@ -47,8 +47,13 @@ class JDSpider(Spider):
 
     def parse_url(self,response):
         for link in self.needed_url_extractor.extract_links(response):
-            if 'industryCatId' in link.url:
-                yield SplashRequest(link.url,callback=self.parse_item,args={'wait':2.5,'html':1,})
+            if 'industryCatId' and 'cat' in link.url:
+                url=re.sub(r'sort=.*&','sort=d&',link.url)
+                if 'search_condition' in url:
+                    url=re.sub(r'search_condition=.*&','search_condition=7',url)
+                    url=re.sub(r'miaosha=.*&','miaosha=0&',url)
+                    url=re.sub(r'wwonline=.*&','wwonline=0&',url)
+                yield SplashRequest(url,callback=self.parse_item,args={'wait':2.5,'html':1,})
 
     def parse_item(self,response):
         hxs=Selector(response)
@@ -58,8 +63,8 @@ class JDSpider(Spider):
         top_id=extract_one(hxs,'//*[@id="J_CrumbSlideCon"]/li[2]/a/text()')
         #https://list.tmall.com/search_product.htm?spm=a220m.1000858.0.0.Wx5Jwi&cat=50034368&sort=d&style=g&search_condition=7&from=sn_1_rightnav&active=1&industryCatId=50043495&tmhkmain=0&type=pc
         #type_id=re.findall(r'.*industryCatId=(.*)',response.url)[0].split('&')[0]
-        type_id1=extract_one(hxs,'//*[@id="J_CrumbSlideCon"]//div/a/text()')[0]
-        type_id2 = extract_one(hxs, '//*[@id="J_CrumbSlideCon"]//div/a/text()')[-1]
+        type_id1=extract_one(hxs,'//*[@id="J_CrumbSlideCon"]//div/a/text()').split('/n')[0]
+        type_id2 = extract_one(hxs, '//*[@id="J_CrumbSlideCon"]//div/a/text()').split('/n')[-1]
         titles=[]
         for t in item_titles:
             if t.strip()!='':
@@ -87,8 +92,13 @@ class JDSpider(Spider):
                     yield Good(good)
 
         for link in self.needed_url_extractor.extract_links(response):
-            if 'industryCatId' in link.url:
-                yield SplashRequest(link.url, callback=self.parse_item, args={'wait': 2.5, 'html': 1,})
+            if 'industryCatId' and 'cat' in link.url and 'post_fee=-1' not in link.url:
+                url = re.sub(r'sort=.*&', 'sort=d&', link.url)
+                if 'search_condition' in url:
+                    url = re.sub(r'search_condition=.*&', 'search_condition=7', url)
+                    url=re.sub(r'miaosha=.*&','miaosha=0&',url)
+                    url=re.sub(r'wwonline=.*&','wwonline=0&',url)
+                    yield SplashRequest(url, callback=self.parse_item, args={'wait': 2.5, 'html': 1,})
 
 
 
