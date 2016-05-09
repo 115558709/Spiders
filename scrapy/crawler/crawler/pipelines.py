@@ -29,7 +29,8 @@ class MySQLPipeline(object):
         self.db = db
 
     def process_item(self,item,spider):
-        self.table.insert(item['mall'],item['rank'],item['title'],item['price'],item['turnover_index'],item['top_id'],item['type_id'],item['url'])
+        self.table.insert(item['mall'],item['rank'],item['title'],item['price'],
+                          item['turnover_index'],item['top_id'],item['type_id1'],item['type_id2'],item['url'])
         return item
 
     @classmethod

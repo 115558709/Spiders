@@ -12,6 +12,7 @@ class Good(Item):
     price=Field()
     turnover_index=Field()
     top_id=Field()
-    type_id=Field()
+    type_id1=Field()
+    type_id2=Field()
     url=Field()
 

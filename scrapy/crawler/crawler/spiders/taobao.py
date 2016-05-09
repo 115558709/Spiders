@@ -11,6 +11,7 @@ from crawler.items import Good
 
 class TBSpider(Spider):
     name='tb'
+    download_delay= 5
     allowed_domains=['taobao.com']
     start_urls=['https://top.taobao.com/index.php?topId=TR_FS&leafId=50010850','https://top.taobao.com/index.php?topId=TR_SM&leafId=1101','https://top.taobao.com/index.php?topId=TR_HZP&leafId=121454013','https://top.taobao.com/index.php?topId=TR_MY&leafId=50013618','https://top.taobao.com/index.php?topId=TR_SP&leafId=50008055','https://top.taobao.com/index.php?topId=TR_WT&leafId=50014075','https://top.taobao.com/index.php?topId=TR_JJ&leafId=50016434','https://top.taobao.com/index.php?topId=TR_ZH&leafId=50011975']
     url_pattern=[r'.*rank=sale&type=hot.*']
@@ -38,11 +39,10 @@ class TBSpider(Spider):
             yield SplashRequest(link.url,callback=self.parse_item,args={'wait':5.5,'html':1})
 
     def parse_item(self,response):
-        print response.url
         hxs=Selector(response)
-        #https://top.taobao.com/index.php?leafId=50015380&rank=sale&topId=TR_ZH&type=hot
         top_id=re.findall(r'.*&topId=(\S+_\S+)&type.*',response.url)[0]
-        type_id=re.findall(r'.*leafId=(\d+)&rank=.*',response.url)[0]
+#        type_id=re.findall(r'.*leafId=(\d+)&rank=.*',response.url)[0]
+        type_id1=extract_one(hxs,"//div[@class='block-body ']/div[@class='params-cont']/a[@class='param-item icon-tag param-item-selected']/text()")
         ranks_tuple=extract(hxs,'//*[@class="rank-num rank-focus"]/text()|//*[@class="rank-num rank-important"]/text()|//*[@class="rank-num rank-"]/text()')
         ranks=[]
         for r in ranks_tuple:
@@ -61,7 +61,8 @@ class TBSpider(Spider):
                 'price':p.split('￥')[-1].strip(),
                 'turnover_index':i.strip(),
                 'top_id':top_id.strip(),
-                'type_id':type_id.strip(),
+                'type_id1':type_id1.strip(),
+                'type_id2':'',
                 'url':response.url
             }
             yield Good(good)
