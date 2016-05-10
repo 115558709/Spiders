@@ -49,12 +49,9 @@ class JDSpider(Spider):
         for link in self.needed_url_extractor.extract_links(response):
             if 'ev' not in link.url:
                 url=re.sub(r'page=.*&','page=1&',link.url)
-                if 'stock' in url:
-                    url=re.sub(r'stock=.*&','stock=0&',url)
-                if 'delivery_daofu' in url:
-                    url=re.sub(r'delivery_daofu=.*','delivery_daofu=0&',url)
-                if 'delivery' in url:
-                    url=re.sub(r'delivery=.*&','delivery=0&',url)
+                url=re.sub(r'stock=.*&','stock=0&',url)
+                url=re.sub(r'delivery_daofu=.*&','delivery_daofu=0&',url)
+                url=re.sub(r'delivery=.*&','delivery=0&',url)
                 yield SplashRequest(url,callback=self.parse_item,args={'wait':2.5,'html':1,})
 
     def parse_item(self,response):
@@ -88,12 +85,9 @@ class JDSpider(Spider):
         for link in self.needed_url_extractor.extract_links(response):
             if 'ev' not in link.url:
                 url = re.sub(r'page=.*&', 'page=1&', link.url)
-                if 'stock' in url:
-                    url = re.sub(r'stock=.*&', 'stock=0&', url)
-                if 'delivery_daofu' in url:
-                    url = re.sub(r'delivery_daofu=.*', 'delivery_daofu=0&', url)
-                if 'delivery' in url:
-                    url = re.sub(r'delivery=.*&', 'delivery=0&', url)
+                url = re.sub(r'stock=.*&', 'stock=0&', url)
+                url = re.sub(r'delivery_daofu=.*&', 'delivery_daofu=0&', url)
+                url = re.sub(r'delivery=.*&', 'delivery=0&', url)
                 yield SplashRequest(url, callback=self.parse_item, args={'wait': 2.5, 'html': 1,})
 
 

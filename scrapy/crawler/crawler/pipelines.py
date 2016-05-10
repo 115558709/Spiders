@@ -29,8 +29,12 @@ class MySQLPipeline(object):
         self.db = db
 
     def process_item(self,item,spider):
-        self.table.insert(item['mall'],item['rank'],item['title'],item['price'],
+        try:
+            self.table.insert(item['mall'],item['rank'],item['title'],item['price'],
                           item['turnover_index'],item['top_id'],item['type_id1'],item['type_id2'],item['url'])
+        except Exception as e:
+            pass
+
         return item
 
     @classmethod
