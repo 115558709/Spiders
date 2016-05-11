@@ -11,7 +11,7 @@ import re
 
 class JDSpider(Spider):
     name='jd'
-    download_delay = 2
+    download_delay = 0
     allowed_domains=['jd.com']
 #    start_urls=['http://www.jd.com/']
     start_urls=['http://www.jd.com/allSort.aspx','http://jiadian.jd.com','http://shouji.jd.com/','http://shuma.jd.com/','http://mobile.jd.com/','http://diannao.jd.com/','http://channel.jd.com/home.html','http://channel.jd.com/furniture.html','http://channel.jd.com/decoration.html','http://channel.jd.com/kitchenware.html','http://channel.jd.com/1315-1342.html','http://channel.jd.com/1315-1343.html','http://channel.jd.com/children.html','http://channel.jd.com/1315-1345.html','http://channel.jd.com/beauty.html','http://channel.jd.com/1620-1625.html','http://channel.jd.com/pet.html','http://channel.jd.com/shoes.html','http://channel.jd.com/bag.html','http://channel.jd.com/jewellery.html','http://channel.jd.com/1672-2615.html','http://channel.jd.com/sports.html','http://channel.jd.com/watch.html','http://car.jd.com/','http://che.jd.com','http://baby.jd.com','http://channel.jd.com/toys.html','http://channel.jd.com/food.html','http://channel.jd.com/wine.html','http://fresh.jd.com','http://china.jd.com','http://channel.jd.com/health.html','http://book.jd.com/','http://mvd.jd.com/','http://e.jd.com/ebook.html']
@@ -43,7 +43,7 @@ class JDSpider(Spider):
 
     def parse(self,response):
         for link in self.normal_url_extractor.extract_links(response):
-            yield SplashRequest(link.url,callback=self.parse_url,args={'wait':2.5,'html':1,})
+            yield SplashRequest(link.url,callback=self.parse_url,args={'wait':0.5,'html':1,})
 
     def parse_url(self,response):
         for link in self.needed_url_extractor.extract_links(response):
@@ -52,7 +52,7 @@ class JDSpider(Spider):
                 url=re.sub(r'stock=.*&','stock=0&',url)
                 url=re.sub(r'delivery_daofu=.*&','delivery_daofu=0&',url)
                 url=re.sub(r'delivery=.*&','delivery=0&',url)
-                yield SplashRequest(url,callback=self.parse_item,args={'wait':2.5,'html':1,})
+                yield SplashRequest(url,callback=self.parse_item,args={'wait':0.5,'html':1,})
 
     def parse_item(self,response):
         hxs=Selector(response)
@@ -88,7 +88,7 @@ class JDSpider(Spider):
                 url = re.sub(r'stock=.*&', 'stock=0&', url)
                 url = re.sub(r'delivery_daofu=.*&', 'delivery_daofu=0&', url)
                 url = re.sub(r'delivery=.*&', 'delivery=0&', url)
-                yield SplashRequest(url, callback=self.parse_item, args={'wait': 2.5, 'html': 1,})
+                yield SplashRequest(url, callback=self.parse_item, args={'wait': 0.5, 'html': 1,})
 
 
 

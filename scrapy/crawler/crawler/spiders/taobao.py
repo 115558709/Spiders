@@ -21,7 +21,7 @@ class TBSpider(Spider):
     def start_requests(self):
         for url in self.start_urls:
             yield SplashRequest(url,callback=self.parse,args={
-                'wait':5.5,'html':1,
+                'wait':0.5,'html':1,
             }
             )
 
@@ -31,12 +31,12 @@ class TBSpider(Spider):
 #        //div[@class='block-body ']/div[@class='params-cont']/a/@href
         for url in item_url_list:
             url=url.replace('./index.php?','https://top.taobao.com/index.php?')
-            yield SplashRequest(url,callback=self.extract_url,args={'wait':5.5,'html':1})
+            yield SplashRequest(url,callback=self.extract_url,args={'wait':0.5,'html':1})
 
     def extract_url(self,response):
         hxs=Selector(response,type="html")
         for link in self.url_extractor.extract_links(response):
-            yield SplashRequest(link.url,callback=self.parse_item,args={'wait':5.5,'html':1})
+            yield SplashRequest(link.url,callback=self.parse_item,args={'wait':0.5,'html':1})
 
     def parse_item(self,response):
         hxs=Selector(response)
