@@ -69,7 +69,7 @@ class JDSpider(Spider):
                     title+=t.strip()
                 elif t.startswith('\n'):
                     print title
-                    if title !='':
+                    if title !='' and len(title)>5:
                         titles.append(title.strip())
                         title=''
 
