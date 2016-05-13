@@ -65,12 +65,13 @@ class JDSpider(Spider):
             titles=[]
             title=''
             for t in item_titles:
-                if t.strip()!='\n':
+                if not t.startswith('\n'):
                     title+=t.strip()
-                elif t.strip()=='\n':
+                elif t.startswith('\n'):
                     print title
-                    titles.append(title.strip())
-                    title=''
+                    if title !='':
+                        titles.append(title.strip())
+                        title=''
 
             if len(titles)>19 and search_condition!=type_id1:
                 for i,t in enumerate(titles):
