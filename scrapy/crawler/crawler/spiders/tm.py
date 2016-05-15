@@ -69,7 +69,8 @@ class JDSpider(Spider):
                     title+=t.strip()
                 elif t.endswith('\n'):
                     title+=t.strip()
-                    titles.append(title.strip())
+                    if len(title)>5:
+                        titles.append(title.strip())
                     title=''
 
             if len(titles)>19 and search_condition!=type_id1:
