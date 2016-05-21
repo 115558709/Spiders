@@ -10,7 +10,7 @@ from crawler.items import Good
 
 import re
 
-class JDSpider(Spider):
+class TMSpider(Spider):
     name='tm'
     allowed_domains=['tmall.com']
     download_delay=0
@@ -20,21 +20,6 @@ class JDSpider(Spider):
     needed_url_pattern=[r'.*//list\.tmall\.com.*sort=d']
     needed_url_extractor=LxmlLinkExtractor(allow=needed_url_pattern)
 
-    """
-    types= {('手机', '家用电器', '数码', '电脑', '办公', '电报、办公', '大家电', '电报办公'): 'TR_SM',
-         ('母婴', '母婴玩具'): 'TR_MY',
-         ('食品', '酒类', '生鲜', '特产', '营养保健', '食品饮料','零食','进口食品','茶酒'): 'TR_SP',
-         ('玩具乐器', '运动户外'): 'TR_WT',
-         ('服饰', '鞋靴', '箱包', '珠宝', '奢侈品', '男装',
-          '女装', '童装', '内衣', '珠宝首饰', '礼品箱包', '服饰内衣'
-          '女鞋','男鞋','腕表','珠宝饰品','眼睛'): 'TR_FS',
-         ('个护化妆', '清洁用品','化妆品','个人护理'): 'TR_HZP',
-         ('汽车', '汽车用品', '宠物', '宠物生活'): 'TR_ZH',
-         ('家居', '家具', '厨具', '家居家装', '家装',
-          '家装建材','家纺','家饰','鲜花'): 'TR_JJ'
-         }
-    """
-
     def start_requests(self):
         for url in self.start_urls:
             url='https:'+url
@@ -43,24 +28,25 @@ class JDSpider(Spider):
 
     def parse(self,response):
         for link in self.normal_url_extractor.extract_links(response):
-            yield SplashRequest(link.url,callback=self.parse_url,args={'wait':0.5,'html':1,})
-
-    def parse_url(self,response):
-        for link in self.needed_url_extractor.extract_links(response):
-            if 'industryCatId' and 'cat' in link.url and 'post_fee' and 'brand' not in link.url:
-                url=re.sub(r'sort=.*&','sort=d&',link.url)
-                #url=re.sub(r'search_condition=.*&','search_condition=7',url)
-                url=re.sub(r'miaosha=.*&','miaosha=0&',url)
-                url=re.sub(r'wwonline=.*&','wwonline=0&',url)
+            catId=re.findall(r'.*&cat=(\d+)&')[0]
+            if catId is not None:
+                url='https://list.tmall.com/search_product.htm?active=1&cat=%s&sort=d' % catId
                 yield SplashRequest(url,callback=self.parse_item,args={'wait':0.5,'html':1,})
+
+            #url=re.sub(r'sort=.*&','sort=d&',link.url)
+            #url=re.sub(r'miaosha=.*&','miaosha=0&',url)
+            #url=re.sub(r'wwonline=.*&','wwonline=0&',url)
 
     def parse_item(self,response):
         hxs=Selector(response)
-        search_condition=extract_one(hxs,'//*[@id="J_CrumbSearchInuput"]/@value')
         item_titles=extract(hxs,"//div[@id='J_ItemList']//p[@class='productTitle']/a/text()")
         top_id=extract_one(hxs,'//*[@id="J_CrumbSlideCon"]/li[2]/a/text()')
         type_id1=extract_one(hxs,'//*[@id="J_CrumbSlideCon"]//div[@class="crumbDrop j_CrumbDrop"]/a/text()')
-        if type_id1 is not None and search_condition is not None:
+        if type_id1 is not None:
+            if len(type_id1) >1:
+                type_id2=type_id1.split('/n')[-1]
+            else:
+                type_id2=''
             type_id1=type_id1.split('/n')[0]
             titles=[]
             title=''
@@ -73,7 +59,7 @@ class JDSpider(Spider):
                         titles.append(title.strip())
                     title=''
 
-            if len(titles)>19 and search_condition!=type_id1:
+            if len(titles)>19:
                 for i,t in enumerate(titles):
                     if i<20:
                         good={
@@ -84,20 +70,13 @@ class JDSpider(Spider):
                             'turnover_index':'0',
                             'top_id': top_id.strip(),
                             'type_id1': type_id1.strip(),
-                            'type_id2': search_condition.strip(),
+                            'type_id2': type_id2.strip(),
                             'url': response.url
                         }
 
                         yield Good(good)
 
-        for link in self.needed_url_extractor.extract_links(response):
-            if 'industryCatId' and 'cat' in link.url and 'post_fee' and 'brand' not in link.url:
-                url = re.sub(r'sort=.*&', 'sort=d&', link.url)
-                url = re.sub(r'search_condition=.*&', 'search_condition=7', url)
-                url=re.sub(r'miaosha=.*&','miaosha=0&',url)
-                url=re.sub(r'wwonline=.*&','wwonline=0&',url)
-                yield SplashRequest(url, callback=self.parse_item, args={'wait': 0.5, 'html': 1,})
-
-
+        for link in self.normal_url_extractor.extract_links(response):
+            yield SplashRequest(link.url,callback=self.parse,args={'wait':0.5,'html':1,})
 
 
