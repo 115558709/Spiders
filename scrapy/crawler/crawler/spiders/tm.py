@@ -28,9 +28,9 @@ class TMSpider(Spider):
 
     def parse(self,response):
         for link in self.normal_url_extractor.extract_links(response):
-            catId=re.findall(r'.*&cat=(\d+)&')[0]
+            catId=re.findall(r'.*&cat=(\d+)&',link.url)
             if catId is not None:
-                url='https://list.tmall.com/search_product.htm?active=1&cat=%s&sort=d' % catId
+                url='https://list.tmall.com/search_product.htm?active=1&cat=%s&sort=d' % catId[0]
                 yield SplashRequest(url,callback=self.parse_item,args={'wait':0.5,'html':1,})
 
             #url=re.sub(r'sort=.*&','sort=d&',link.url)
