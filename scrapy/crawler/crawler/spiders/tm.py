@@ -41,7 +41,7 @@ class TMSpider(Spider):
         hxs=Selector(response)
         item_titles=extract(hxs,"//div[@id='J_ItemList']//p[@class='productTitle']/a/text()")
         top_id=extract_one(hxs,'//*[@id="J_CrumbSlideCon"]/li[2]/a/text()')
-        type_id1=extract_one(hxs,'//*[@id="J_CrumbSlideCon"]//div[@class="crumbDrop j_CrumbDrop"]/a/text()')
+        type_id1=extract(hxs,'//*[@id="J_CrumbSlideCon"]//div[@class="crumbDrop j_CrumbDrop"]/a/text()')
         if type_id1 is not None:
             if len(type_id1) >1:
                 type_id2=type_id1.split('/n')[-1]
